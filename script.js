@@ -40,6 +40,12 @@ for (let i = 0; i < buttonsOperators.length; i++) {
     });
 }
 
+addEventListener('keydown', function(e) {
+    if (e.code === 'Backspace' && display.textContent.length > 0) {
+        display.textContent = display.textContent.slice(0, display.textContent.length-1);
+    }
+});
+
 function operate() {
     let lastChar = display.textContent.charAt(display.textContent.length-1);
     if (operators.includes(lastChar)) {
