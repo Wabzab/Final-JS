@@ -4,18 +4,12 @@ const buttonsNumbers = document.querySelectorAll('.buttons-numbers .button')
 const buttonsOperators = document.querySelectorAll('.buttons-operations .button');
 const display = document.getElementById('display');
 
-// eval
+let newNumber = true;
 
 for (let i = 0; i < buttonsNumbers.length; i++) {
     const element = buttonsNumbers[i];
     element.addEventListener('click', function() {
-        if (element.id === 'zero' && display.textContent.length === 0) {
-            return;
-        }
-        if (operators.includes(display.textContent.charAt(display.textContent.length-1)) && element.id === 'zero') {
-            return;
-        }
-        display.textContent += element.textContent
+        appendNumber(element.textContent);
     });
 }
 
@@ -26,25 +20,72 @@ for (let i = 0; i < buttonsOperators.length; i++) {
         continue;
     }
     if (element.id === 'clear') {
-        element.addEventListener('click', () => display.textContent = '');
+        element.addEventListener('click', clear);
         continue;
     }
     element.addEventListener('click', function() {
-        if(display.textContent.length === 0) {
-            return;
-        }
-        if(operators.includes(display.textContent.charAt(display.textContent.length-1))){
-            display.textContent = display.textContent.slice(0, display.textContent.length-1);
-        }
-        display.textContent += element.textContent;
+        appendOperator(element.textContent);
     });
 }
 
 addEventListener('keydown', function(e) {
     if (e.code === 'Backspace' && display.textContent.length > 0) {
         display.textContent = display.textContent.slice(0, display.textContent.length-1);
+        if (display.textContent.length === 0) {
+            display.textContent = '0';
+            newNumber = true;
+        }
+    }
+    if (parseInt(e.code.charAt(e.code.length-1) + '1')) {
+        appendNumber(e.code.charAt(e.code.length-1));
+    }
+
+    switch (e.code) {
+        case 'NumpadAdd':
+            appendOperator('+')
+            break;
+        case 'NumpadSubtract':
+            appendOperator('-')
+            break;
+        case 'NumpadMultiply':
+            appendOperator('*')
+            break;
+        case 'NumpadDivide':
+            appendOperator('/')
+            break;
+        case 'NumpadEnter':
+            operate();
+            break;
+        case 'Delete':
+            clear();
+            break;
+        default:
+            break;
     }
 });
+
+function appendNumber(number) {
+    if (newNumber) {
+        if (number === '0') {
+            return;
+        }
+        display.textContent = display.textContent.slice(0, display.textContent.length-1);
+        newNumber = false
+    }
+    
+    display.textContent += number;
+}
+
+function appendOperator(operator) {
+    if(display.textContent.length === 0) {
+        return;
+    }
+    if(operators.includes(display.textContent.charAt(display.textContent.length-1))){
+        display.textContent = display.textContent.slice(0, display.textContent.length-1);
+    }
+    display.textContent += operator + '0';
+    newNumber = true;
+}
 
 function operate() {
     let lastChar = display.textContent.charAt(display.textContent.length-1);
@@ -55,8 +96,17 @@ function operate() {
             display.textContent += '0';
         }
     }
+    let result = eval(display.textContent)
+    if (result === Infinity) {
+        display.textContent = 'Division by zero!';
+        return;
+    }
+    display.textContent = result;
+}
 
-    display.textContent = eval(display.textContent);
+function clear() {
+    display.textContent = '0';
+    newNumber = true;
 }
 
 function add(numA, numB) {
