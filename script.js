@@ -89,6 +89,9 @@ function appendOperator(operator) {
     if(display.textContent.length === 0) {
         return;
     }
+    if (newNumber) {
+        display.textContent = display.textContent.slice(0, display.textContent.length-2)
+    }
     if(operators.includes(display.textContent.charAt(display.textContent.length-1))){
         display.textContent = display.textContent.slice(0, display.textContent.length-1);
     }
