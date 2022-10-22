@@ -5,6 +5,7 @@ const buttonsOperators = document.querySelectorAll('.buttons-operations .button'
 const display = document.getElementById('display');
 
 let newNumber = true;
+let divZero = false;
 
 for (let i = 0; i < buttonsNumbers.length; i++) {
     const element = buttonsNumbers[i];
@@ -65,6 +66,10 @@ addEventListener('keydown', function(e) {
 });
 
 function appendNumber(number) {
+    if (divZero) {
+        clear();
+    }
+
     if (newNumber) {
         if (number === '0') {
             return;
@@ -77,6 +82,9 @@ function appendNumber(number) {
 }
 
 function appendOperator(operator) {
+    if (divZero) {
+        clear();
+    }
     if(display.textContent.length === 0) {
         return;
     }
@@ -99,6 +107,7 @@ function operate() {
     let result = eval(display.textContent)
     if (result === Infinity) {
         display.textContent = 'Division by zero!';
+        divZero = true;
         return;
     }
     display.textContent = result;
@@ -107,6 +116,7 @@ function operate() {
 function clear() {
     display.textContent = '0';
     newNumber = true;
+    divZero = false;
 }
 
 function add(numA, numB) {
