@@ -37,12 +37,16 @@ for (let i = 0; i < buttonsOperators.length; i++) {
 addEventListener('keydown', function(e) {
     if (e.code === 'Backspace' && display.textContent.length > 0) {
         display.textContent = display.textContent.slice(0, display.textContent.length-1);
-        if (display.textContent.length === 0 && prevNum) {
-            curNum = prevNum;
-            prevNum = 0;
-            display.textContent = `${curNum}`;
-            displayPlaceholder.textContent = '';
-            newNumber = false;
+        if (display.textContent.length === 0) {
+            if (prevNum) {
+                curNum = prevNum;
+                prevNum = 0;
+                display.textContent = `${curNum}`;
+                displayPlaceholder.textContent = '';
+                newNumber = false;  
+            } else {
+                clear();
+            }
         }
     }
     if (parseInt(e.code.charAt(e.code.length-1) + '1')) {
@@ -144,6 +148,9 @@ function equate() {
 }
 
 function clear() {
+    prevNum = 0;
+    curNum = 0;
+    displayPlaceholder.textContent = '';
     display.textContent = '0';
     newNumber = true;
     divZero = false;
