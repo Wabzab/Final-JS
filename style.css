@@ -5,6 +5,7 @@
     --background-dark: #0a1414;
     --background-light-grey: #E5E7EB;
     --text-light: #F9FAF8;
+    --text-grey: #8d8d8cc2;
 }
 
 * {
@@ -50,6 +51,7 @@ main {
     flex: 1;
     margin: 1em 1em;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: left;
 }
@@ -57,12 +59,16 @@ main {
 .output {
     text-align: left;
     margin: 0em 0em;
-    height: 2.3em;
+    height: 1.15em;
     width: 100%;
     font-size: 48px;
-    color: azure;
+    color: var(--text-light);
     word-wrap: break-word;
     overflow: auto;
+}
+
+#displayPlaceholder {
+    color: var(--text-grey)
 }
 
 .buttons-container {

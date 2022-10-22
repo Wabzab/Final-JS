@@ -3,9 +3,14 @@ const operators = ['+', '-', '*', '/'];
 const buttonsNumbers = document.querySelectorAll('.buttons-numbers .button')
 const buttonsOperators = document.querySelectorAll('.buttons-operations .button');
 const display = document.getElementById('display');
+const displayPlaceholder = document.getElementById('displayPlaceholder');
 
 let newNumber = true;
 let divZero = false;
+
+let curNum = 0;
+let prevNum = 0;
+let oper = '+';
 
 for (let i = 0; i < buttonsNumbers.length; i++) {
     const element = buttonsNumbers[i];
@@ -30,12 +35,14 @@ for (let i = 0; i < buttonsOperators.length; i++) {
 }
 
 addEventListener('keydown', function(e) {
-    e.preventDefault();
     if (e.code === 'Backspace' && display.textContent.length > 0) {
         display.textContent = display.textContent.slice(0, display.textContent.length-1);
-        if (display.textContent.length === 0) {
-            display.textContent = '0';
-            newNumber = true;
+        if (display.textContent.length === 0 && prevNum) {
+            curNum = prevNum;
+            prevNum = 0;
+            display.textContent = `${curNum}`;
+            displayPlaceholder.textContent = '';
+            newNumber = false;
         }
     }
     if (parseInt(e.code.charAt(e.code.length-1) + '1')) {
@@ -56,7 +63,10 @@ addEventListener('keydown', function(e) {
             appendOperator('/')
             break;
         case 'NumpadEnter':
-            operate();
+            e.preventDefault();
+            if (prevNum) {
+                equate();
+            }
             break;
         case 'Delete':
             clear();
@@ -83,38 +93,54 @@ function appendNumber(number) {
 }
 
 function appendOperator(operator) {
-    if (divZero) {
-        clear();
+    if (divZero) { clear();}
+
+    if(display.textContent.charAt(display.textContent.length-1) === '0' && display.textContent.length === 1) {
+        if (prevNum) {
+            oper = operator
+            displayPlaceholder.textContent = displayPlaceholder.textContent.slice(0, displayPlaceholder.textContent.length-1) + oper;
+            return;
+        } else {
+            return;
+        }
     }
-    if(display.textContent.length === 0) {
-        return;
+
+    curNum = parseFloat(display.textContent);
+    if (prevNum) {
+        curNum = operate(prevNum, curNum, oper);
     }
-    if (newNumber) {
-        display.textContent = display.textContent.slice(0, display.textContent.length-2)
-    }
-    if(operators.includes(display.textContent.charAt(display.textContent.length-1))){
-        display.textContent = display.textContent.slice(0, display.textContent.length-1);
-    }
-    display.textContent += operator + '0';
+    
+    oper = operator;
+    prevNum = curNum;
+    curNum = 0;
+    displayPlaceholder.textContent = `${prevNum} ${oper}`;
+    display.textContent = '0';
     newNumber = true;
 }
 
-function operate() {
-    let lastChar = display.textContent.charAt(display.textContent.length-1);
-    if (operators.includes(lastChar)) {
-        if (lastChar === '/' || lastChar === '*') {
-            display.textContent += '1';
-        } else {
-            display.textContent += '0';
-        }
+function operate(numA, numB, operator) {
+    let result = 0;
+    switch (operator) {
+        case '+':
+            return(add(numA, numB));
+        case '-':
+            return(subtract(numA, numB));
+        case '*':
+            return(multiply(numA, numB));
+        case '/':
+            if (numB === 0) {
+                divZero = true;
+                return(Infinity);
+            }
+            return(divide(numA, numB));
     }
-    let result = eval(display.textContent)
-    if (result === Infinity) {
-        display.textContent = 'Division by zero!';
-        divZero = true;
-        return;
-    }
-    display.textContent = result;
+}
+
+function equate() {
+    curNum = operate(prevNum, parseFloat(display.textContent), oper);
+    prevNum = 0;
+    display.textContent = `${curNum}`;
+    displayPlaceholder.textContent = '';
 }
 
 function clear() {
