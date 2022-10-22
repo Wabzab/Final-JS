@@ -30,6 +30,7 @@ for (let i = 0; i < buttonsOperators.length; i++) {
 }
 
 addEventListener('keydown', function(e) {
+    e.preventDefault();
     if (e.code === 'Backspace' && display.textContent.length > 0) {
         display.textContent = display.textContent.slice(0, display.textContent.length-1);
         if (display.textContent.length === 0) {
