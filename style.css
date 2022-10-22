@@ -29,7 +29,7 @@ header {
 }
 
 h2 {
-    font-size: 42px;
+    font-size: 40px;
 }
 
 img {
@@ -40,6 +40,7 @@ main {
     background-color: var(--background-dark);
     width: 55em;
     height: 100%;
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
@@ -56,12 +57,12 @@ main {
 .output {
     text-align: left;
     margin: 0em 0em;
-    height: 2em;
+    height: 2.3em;
     width: 100%;
     font-size: 48px;
     color: azure;
     word-wrap: break-word;
-
+    overflow: auto;
 }
 
 .buttons-container {
@@ -90,13 +91,19 @@ main {
     margin: 5px 7px;
     font-size: 36px;
     flex: 1 1 30%;
+    border-style: none;
+    border-radius: 5px;
     color: var(--text-light);
     background-color: var(--background-mid);
 }
 
+.button:hover {
+    background-color: var(--background-light);
+}
+
 footer {
     background-color: darkslategray;
-    height: 7vh;
+    height: 4.5vh;
     width: 100%;
     display: flex;
     justify-content: center;
