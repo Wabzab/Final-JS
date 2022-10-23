@@ -2,11 +2,13 @@
 const operators = ['+', '-', '*', '/'];
 const buttonsNumbers = document.querySelectorAll('.buttons-numbers .button')
 const buttonsOperators = document.querySelectorAll('.buttons-operations .button');
+const buttonsFunctions = document.querySelectorAll('.buttons-functions .button')
 const display = document.getElementById('display');
 const displayPlaceholder = document.getElementById('displayPlaceholder');
 
 let newNumber = true;
 let divZero = false;
+let decimal = false;
 
 let curNum = 0;
 let prevNum = 0;
@@ -21,34 +23,32 @@ for (let i = 0; i < buttonsNumbers.length; i++) {
 
 for (let i = 0; i < buttonsOperators.length; i++) {
     const element = buttonsOperators[i];
-    if (element.id === 'equal') {
-        element.addEventListener('click', operate);
-        continue;
-    }
-    if (element.id === 'clear') {
-        element.addEventListener('click', clear);
-        continue;
-    }
     element.addEventListener('click', function() {
         appendOperator(element.textContent);
     });
 }
 
-addEventListener('keydown', function(e) {
-    if (e.code === 'Backspace' && display.textContent.length > 0) {
-        display.textContent = display.textContent.slice(0, display.textContent.length-1);
-        if (display.textContent.length === 0) {
-            if (prevNum) {
-                curNum = prevNum;
-                prevNum = 0;
-                display.textContent = `${curNum}`;
-                displayPlaceholder.textContent = '';
-                newNumber = false;  
-            } else {
-                clear();
-            }
-        }
+for (let i = 0; i < buttonsFunctions.length; i++) {
+    const element = buttonsFunctions[i];
+    switch (element.id) {
+        case 'equal':
+            element.addEventListener('click', function() {
+                if (prevNum) {
+                    equate();
+                }
+            });
+            break;
+        case 'clear':
+            element.addEventListener('click', clear);
+            break;
+        case 'decimal':
+            element.addEventListener('click', appendDecimal)
+            break;
     }
+}
+
+addEventListener('keydown', function(e) {
+    console.log(e.code);
     if (parseInt(e.code.charAt(e.code.length-1) + '1')) {
         appendNumber(e.code.charAt(e.code.length-1));
     }
@@ -72,10 +72,20 @@ addEventListener('keydown', function(e) {
                 equate();
             }
             break;
+        case 'Enter':
+            e.preventDefault();
+            if (prevNum) {
+                equate();
+            }
+            break;
         case 'Delete':
             clear();
             break;
-        default:
+        case 'Backspace':
+            deprecate();
+            break;
+        case 'NumpadDecimal':
+            appendDecimal();
             break;
     }
 });
@@ -120,6 +130,7 @@ function appendOperator(operator) {
     displayPlaceholder.textContent = `${prevNum} ${oper}`;
     display.textContent = '0';
     newNumber = true;
+    decimal = false;
 }
 
 function operate(numA, numB, operator) {
@@ -154,6 +165,43 @@ function clear() {
     display.textContent = '0';
     newNumber = true;
     divZero = false;
+    decimal = false;
+}
+
+function appendDecimal() {
+    if (!decimal) {
+        if (newNumber) {
+            newNumber = false;
+        }
+        display.textContent += '.';
+        decimal = true;
+    }
+}
+
+function deprecate() {
+    if (display.textContent.length > 0) {
+        if (display.textContent.charAt(display.textContent.length-1) === '.') {
+            decimal = false;
+        }
+        display.textContent = display.textContent.slice(0, display.textContent.length-1);
+        if (display.textContent.length === 0) {
+            if (prevNum) {
+                curNum = prevNum;
+                prevNum = 0;
+                display.textContent = `${curNum}`;
+                displayPlaceholder.textContent = '';
+                newNumber = false;
+                return;
+            } else {
+                clear();
+                return;
+            }
+        }
+        if (display.textContent.length === 1 && display.textContent.charAt(display.textContent.length-1) === '0') {
+            newNumber = true;
+            return;
+        }
+    }
 }
 
 function add(numA, numB) {

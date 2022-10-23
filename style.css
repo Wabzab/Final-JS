@@ -84,11 +84,22 @@ main {
     align-items: center;
 }
 
-.buttons-operations {
+.side-buttons-container {
     flex: 2;
     display: flex;
+    flex-direction: column;
+}
+
+.buttons-operations {
+    flex: 1;
+    display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+}
+
+.buttons-functions {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .button {
